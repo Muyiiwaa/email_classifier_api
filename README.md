@@ -1,27 +1,72 @@
-# FastAPI Project Setup with uv
+# FastAPI Project Setup with `uv`
 
+This guide walks you through setting up a new FastAPI project using `uv`, a fast Python package installer and resolver.
 
-1. Initialize project
-uv init project_name
-cd project_name
+### **Step 1: Initialize Your Project**
 
-2. Add first dependency
-uv add first_library
+First, create a new project directory and initialize it with `uv`. Replace `your_project_name` with the desired name for your project.
 
-3. Activate virtual environment
-- Linux / macOS /github codespaces
- source .venv/bin/activate
-- Windows PowerShell
-.venv\Scripts\activate
+```sh
+uv init your_project_name
+cd your_project_name
+```
 
-4. Add other libraries including FastAPI and Uvicorn
-uv add fastapi uvicorn any_other_library
+### **Step 2: Activate the Virtual Environment**
 
-5. Sync dependencies
+`uv` automatically creates a virtual environment (`.venv`) in your project directory. Activate it to start installing dependencies.
+
+-   **On Linux, macOS, or GitHub Codespaces:**
+    ```sh
+    source .venv/bin/activate
+    ```
+
+-   **On Windows (using PowerShell):**
+    ```sh
+    .venv\Scripts\activate
+    ```
+
+### **Step 3: Add Dependencies**
+
+With the virtual environment active, you can add your required Python libraries. Let's add `fastapi` and `uvicorn` (the ASGI server to run the app).
+
+```sh
+uv add fastapi uvicorn
+```
+
+You can add any other libraries you need by listing them in the same command.
+
+### **Step 4: Sync Your Dependencies**
+
+After adding dependencies, it's a good practice to ensure your environment is perfectly in sync with your `pyproject.toml` file.
+
+```sh
 uv sync
+```
 
-6. write your code in main.py
+### **Step 5: Write Your Application Code**
 
-7. run the app
+Create a `main.py` file and write your FastAPI application code. Here is a simple "Hello World" example to get you started:
+
+```python
+# main.py
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+```
+
+### **Step 6: Run the Development Server**
+
+Finally, run your application using `uvicorn`. The server will be accessible at `http://127.0.0.1:8000`.
+
+```sh
 uvicorn main:app --reload
+```
+
+-   `main`: Refers to the `main.py` file.
+-   `app`: Refers to the `app` object created inside `main.py`.
+-   `--reload`: Makes the server restart automatically whenever you make changes to the code.
 
