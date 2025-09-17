@@ -1,4 +1,0 @@
-torch
-transformers
-fastapi[all]
-numpy
