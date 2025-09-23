@@ -13,7 +13,7 @@ import joblib
 # define a funtion that loads the data from kaggle
 def get_data() -> pd.DataFrame:
     # Download latest version
-    path = kagglehub.dataset_download("nabihazahid/spotify-dataset-for-churn-analysis")
+    path = kagglehub.dataset_download("vrajesh0sharma7/college-student-placement")
     data_path = os.listdir(path)
     data_url = os.path.join(path, data_path[0])
     final_data = pd.read_csv(data_url)
@@ -23,8 +23,8 @@ def get_data() -> pd.DataFrame:
 
 def encode_dataset(data: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
     # drop user_id
-    if "user_id" in list(data.columns):
-        data.drop(columns=["user_id"], inplace=True)
+    if "College_ID" in list(data.columns):
+        data.drop(columns=["College_ID"], inplace=True)
     # encode the categorical variables
     label_encoders = {}
     cat_cols = list(data.select_dtypes(include="object").columns)
@@ -45,8 +45,8 @@ def split_scale_data(data:pd.DataFrame) -> Tuple:
     """
     X_train, X_test, y_train, y_test = None,None,None,None
     try:
-        X, y = data.drop(columns=['is_churned']), data[['is_churned']]
-        X_train, y_train, X_test, y_test = train_test_split(X,y,
+        X, y = data.drop(columns=['Placement']), data.Placement
+        X_train, X_test, y_train, y_test = train_test_split(X,y,
                                                             test_size=0.2, random_state=23,
                                                             stratify=y)
         # scale the dataset
@@ -64,25 +64,12 @@ def split_scale_data(data:pd.DataFrame) -> Tuple:
     
     return X_train, X_test, y_train, y_test
 
-def split_scale(encode_data, y):
-    X_train, X_test, y_train, y_test = train_test_split(encode_data, data[['is_churned']],
-                                                        random_state=23)
-    scaler = StandardScaler()
-    column_names = X_train.columns
-    scaler.fit_transform(X_train)
-    X_train = pd.DataFrame(X_train, columns=column_names)
-    X_test = scaler.transform(X_test)
-    X_test = pd.DataFrame(X_test, columns=column_names)
-    
-    joblib.dump(value=scaler, filename='scaler.pkl')
-    
-    return X_train, X_test, y_train, y_test
 
 # function that performs training
 
 def training(X_train:pd.DataFrame, X_test:pd.DataFrame,
              y_train:pd.Series, y_test:pd.Series) -> Tuple:
-    model = RandomForestClassifier(n_estimators=10, random_state=23)
+    model = RandomForestClassifier(random_state=23, n_estimators=5)
     model.fit(X_train, y_train)
     train_preds = model.predict(X_train)
     test_preds = model.predict(X_test)
@@ -99,7 +86,7 @@ def training(X_train:pd.DataFrame, X_test:pd.DataFrame,
 if __name__ == "__main__":
     data = get_data()
     encoded_data, encoder = encode_dataset(data)
-    print(type(encoded_data))
-    print(type(data.is_churned))
-    X_train, X_test, y_train, y_test = split_scale(encode_data=encoded_data, y=data[['is_churned']])
+    X_train, X_test, y_train, y_test = split_scale_data(data=encoded_data)
     train_score, test_score = training(X_train, X_test, y_train, y_test)
+    print(train_score)
+    print(test_score)
